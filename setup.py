@@ -16,7 +16,7 @@ setup(
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     install_requires=[
-        'bs4', 'lxml', 'matplotlib', 'numpy', 'pandas', 'requests', 'seaborn', 'setuptools', 'tqdm', 'wheel'
+        'bs4', 'lxml', 'matplotlib', 'numpy', 'pandas', 'pylint', 'requests', 'seaborn', 'setuptools', 'tqdm', 'wheel'
     ],
     python_requires='>=3.6',
     classifiers=[

@@ -22,9 +22,9 @@ def fetch_eu_leagues(page):
     assert response.status_code == 200
     return (bs4
         .BeautifulSoup(response.content, 'lxml')
-        .find('div', {'class', 'responsive-table'})
+        .find('div', class_='responsive-table')
         .find('tbody')
-        .find_all('tr', {'class', re.compile('odd|even')})
+        .find_all('tr', class_=re.compile('odd|even'))
     )
 
 def extract_league_link(league):
@@ -39,9 +39,9 @@ def fetch_clubs(league):
     assert response.status_code == 200
     return (bs4
         .BeautifulSoup(response.content, 'lxml')
-        .find('div', {'class', 'responsive-table'})
+        .find('div', class_='responsive-table')
         .find('tbody')
-        .find_all('tr', {'class', re.compile('odd|even')})
+        .find_all('tr', class_=re.compile('odd|even'))
     )
 
 def extract_club_link(club):
@@ -57,9 +57,9 @@ def fetch_players(club):
         soup = bs4.BeautifulSoup(response.content, 'lxml')
         try:
             return (soup
-                .find('div', {'class', 'responsive-table'})
+                .find('div', class_='responsive-table')
                 .find('tbody')
-                .find_all('tr', {'class', re.compile('odd|even')})
+                .find_all('tr', class_=re.compile('odd|even'))
             )
         except Exception as e:
             print(f'{e}: empty squad for club == {club}')

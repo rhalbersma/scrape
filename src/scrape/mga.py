@@ -84,7 +84,7 @@ def fetch_register(Licensee='', Class='', Status='', URL=''):
         return pd.DataFrame()
     try:
         script = (soup
-            .find('script', {'src': 'list.min.js'})
+            .find('script', src='list.min.js')
             .find_next_sibling('script')
             .string
         )
@@ -131,7 +131,7 @@ def fetch_linked_companies(company):
                 )
             )
             for link in (soup
-                .find('ul', {'class': 'linked-companies-list'})
+                .find('ul', class_='linked-companies-list')
                 .find_all('a')
             )
         ],
@@ -186,7 +186,7 @@ def fetch_providers_and_urls(company):
         providers = pd.concat([
             eval_game_type(company, row)
             for row in (soup
-                .find('table', {'id': 'mainPlaceHolder_coreContentPlaceHolder_mainContentPlaceHolder_sealContent_tblGameTypesTable'})
+                .find('table', id='mainPlaceHolder_coreContentPlaceHolder_mainContentPlaceHolder_sealContent_tblGameTypesTable')
                 .find_all('tr')[1:]
             )
         ])

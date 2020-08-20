@@ -6,10 +6,11 @@
 # An independent re-implementation of Marcel Wieting's LinkedIn post
 # https://www.linkedin.com/pulse/web-scraping-relative-age-effect-professional-football-marcel-wieting/?trackingId=d8UqaacWy%2FaNdTYFhh4MsQ%3D%3D
 
-import matplotlib.pyplot as plt
+import calendar
+
 import numpy as np
 import pandas as pd
-import seaborn as sns
+import plotnine as p9
 from tqdm import tqdm
 
 import scrape.transfermarkt as tm
@@ -17,7 +18,7 @@ import scrape.transfermarkt as tm
 print('Fetching leauge URLs from the top 50 EU leagues:')
 eu_league_urls = list(filter(lambda link: link.endswith('1'), [
     tm.extract_league_link(league)
-    for page in range(1, 5)
+    for page in tqdm(range(1, 5))
     for league in tm.fetch_eu_leagues(page)
 ]))
 
@@ -44,18 +45,20 @@ eu_player_data = pd.concat([
     for club in tqdm(eu_club_urls)
 ])
 
-df = eu_player_data.reset_index(drop=True)
-df.columns = [ 'number', 'position', 'name', 'birth_date', 'empty', 'market_value', 'squad']
-df = (df
+df = (eu_player_data
+    .reset_index(drop=True)
+    .set_axis(['number', 'position', 'name', 'birth_date', 'empty', 'market_value', 'squad'], axis='columns')
     .replace({'number': {'-': np.nan}})
     .astype(dtype={'number': float})
     .astype(dtype={'number': 'Int64'})
     .assign(surname = lambda x: x.name.str.split(' ').str[-1])
     .assign(position = lambda x: x.apply(lambda y: y.position.split(y.surname)[-1], axis=1).str.normalize('NFKD'))
     .assign(birth_date = lambda x: pd.to_datetime(x.birth_date.str.split('(').str[0].replace('- ', ''), errors='coerce'))
-    .assign(birth_month = lambda x: x.birth_date.dt.month)
-    .assign(month_weight = lambda x: 1.0 / x.birth_date.dt.days_in_month)
-    .assign(birth_dayofyear = lambda x: x.birth_date.dt.dayofyear)
+    .dropna(subset=['birth_date'])
+    .assign(dayofyear = lambda x: x.birth_date.dt.dayofyear.astype(int))
+    .assign(month = lambda x: x.birth_date.dt.month.astype(int))
+    .assign(month_abbr = lambda x: x.apply(lambda y: calendar.month_abbr[y.month], axis=1))
+    .assign(weight = lambda x: 1.0 / x.birth_date.dt.days_in_month)
     .assign(market_value = lambda x: x.market_value.str.normalize('NFKD').str.replace(' ', '').replace('-', np.nan))
     .assign(market_value = lambda x: x.market_value.str.replace('Th.', 'k'))
     .assign(multiplier = lambda x: x.market_value.str[-1].replace('m', 1.0).replace('k', .001))
@@ -65,25 +68,37 @@ df = (df
 
 # TODO: clean bad characters from "position" column, and solve Senegalese Centre-Back players named "Ba"
 
-# Total players, per month
-sns.regplot(y='players', x='birth_month', data=df.groupby('birth_month').agg(players = ('birth_month', 'count')).reset_index())
-plt.show()
+# Total players, per month (unweighted by length of month)
+data = (df
+    .groupby(['month', 'month_abbr'])
+    .agg(players = ('month', 'count'))
+    .reset_index()
+)
+(p9.ggplot(data, p9.aes('month', 'players'))
+    + p9.geom_point()
+    + p9.stat_smooth(method='lm')
+    + p9.scale_x_continuous(breaks=data.month, labels=data.month_abbr)
+)
 
-# Players per day, per month
-sns.regplot(y='players_per_day', x='birth_month', data=df.groupby('birth_month').agg(players_per_day = ('month_weight', 'sum')).reset_index())
-plt.show()
+# Players per day, per month (weighted by length of month)
+data = (df
+    .groupby(['month', 'month_abbr'])
+    .agg(players_per_day = ('weight', 'sum'))
+    .reset_index()
+)
+(p9.ggplot(data, p9.aes('month', 'players_per_day'))
+    + p9.geom_point()
+    + p9.stat_smooth(method='lm')
+    + p9.scale_x_continuous(breaks=data.month, labels=data.month_abbr)
+)
 
 # Total players, per day
-sns.regplot(y='players', x='birth_dayofyear', data=df.groupby('birth_dayofyear').agg(players = ('birth_date', 'count')).reset_index())
-plt.show()
-
-# Market value, per month
-sns.regplot(y='market_value', x='birth_month', data=df.groupby('birth_month').agg(market_value = ('market_value', 'mean')).reset_index())
-plt.show()
-
-# Market value, per month
-sns.boxplot(y='market_value', x='birth_month', data=df)
-plt.ylim(0,3) # comment this line to see the huge variation of players worth more than EUR 3m
-plt.show()
-
-# df.to_csv('data/eu_player_data.csv')
+data= (df
+    .groupby('dayofyear')
+    .agg(players = ('dayofyear', 'count'))
+    .reset_index()
+)
+(p9.ggplot(data, p9.aes('dayofyear', 'players'))
+    + p9.geom_point()
+    + p9.stat_smooth(method='lm')
+)

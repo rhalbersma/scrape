@@ -1,13 +1,13 @@
 # Exercises in web scraping
 
 [![Language](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org/)
-[![Standard](https://img.shields.io/badge/Python-3.6-blue.svg)](https://en.wikipedia.org/wiki/History_of_Python)
+[![Standard](https://img.shields.io/badge/Python-3.8-blue.svg)](https://en.wikipedia.org/wiki/History_of_Python)
 [![License](https://img.shields.io/badge/license-Boost-blue.svg)](https://opensource.org/licenses/BSL-1.0)
 [![Lines of Code](https://tokei.rs/b1/github/rhalbersma/scrape?category=code)](https://github.com/rhalbersma/scrape)
 
 ## Requirements
 
-- Python version 3.6 or higher
+- Python version 3.8 or higher
 
 ## Installation
 
@@ -16,6 +16,7 @@ git clone https://github.com/rhalbersma/scrape.git
 cd scrape
 python3 -m venv .env
 source .env/bin/activate
+pip install --upgrade pip setuptools wheel
 pip install -e .
 ```
 

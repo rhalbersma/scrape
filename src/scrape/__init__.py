@@ -3,7 +3,7 @@
 #    (See accompanying file LICENSE_1_0.txt or copy at
 #          http://www.boost.org/LICENSE_1_0.txt)
 
-from .cardmarket import parse_query, product_query
+from .cardmarket import search_products
 from .etiget import etiget
 from .mga import fetch_menus, fetch_register, eval_companies, fetch_linked_companies, fetch_providers_and_urls
 from .nct import download_data, unzip_data, parse_xml

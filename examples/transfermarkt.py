@@ -22,11 +22,6 @@ eu_league_urls = list(filter(lambda link: link.endswith('1'), [
     for league in tm.fetch_eu_leagues(page)
 ]))
 
-eu_league_ids = [
-    url.split('/')[-1]
-    for url in eu_league_urls
-]
-
 print('Fetching club URLs from all leagues:')
 eu_club_urls = [
     tm.extract_club_link(club)
@@ -36,37 +31,38 @@ eu_club_urls = [
 
 print('Fetching player data from all clubs:')
 eu_player_data = pd.concat([
-    # Normally, we would directly extract each team with pd.read_html().
-    # However, some cells contain nested HTML tables which will not be handled gracefully.
-    pd.DataFrame(data=[
-        tm.extract_player_data(player)
-        for player in tm.fetch_players(club)
-    ]).assign(squad = club.split('/')[1])
+    # Normally, we would extract player data from the team table with pd.read_html().
+    # However, some cells contain nested HTML tables which would not have been handled gracefully.
+    # Instead, we use our own extract_player_data() on each player individually.
+    pd.DataFrame(
+        data=[
+            tm.extract_player_data(player)
+            for player in tm.fetch_players(club)
+        ],
+        columns=[
+            'number', 'name', 'position', 'birth_date', 'market_value'
+        ]
+    ).assign(squad = club.split('/')[1])
     for club in tqdm(eu_club_urls)
 ])
 
 df = (eu_player_data
     .reset_index(drop=True)
-    .set_axis(['number', 'position', 'name', 'birth_date', 'empty', 'market_value', 'squad'], axis='columns')
     .replace({'number': {'-': np.nan}})
     .astype(dtype={'number': float})
     .astype(dtype={'number': 'Int64'})
-    .assign(surname = lambda x: x.name.str.split(' ').str[-1])
-    .assign(position = lambda x: x.apply(lambda y: y.position.split(y.surname)[-1], axis=1).str.normalize('NFKD'))
     .assign(birth_date = lambda x: pd.to_datetime(x.birth_date.str.split('(').str[0].replace('- ', ''), errors='coerce'))
     .dropna(subset=['birth_date'])
     .assign(dayofyear = lambda x: x.birth_date.dt.dayofyear.astype(int))
     .assign(month = lambda x: x.birth_date.dt.month.astype(int))
     .assign(month_abbr = lambda x: x.apply(lambda y: calendar.month_abbr[y.month], axis=1))
     .assign(weight = lambda x: 1.0 / x.birth_date.dt.days_in_month)
-    .assign(market_value = lambda x: x.market_value.str.normalize('NFKD').str.replace(' ', '').replace('-', np.nan))
-    .assign(market_value = lambda x: x.market_value.str.replace('Th.', 'k'))
-    .assign(multiplier = lambda x: x.market_value.str[-1].replace('m', 1.0).replace('k', .001))
+    .assign(market_value = lambda x: x.market_value.str.normalize('NFKD').str.replace(' ', '').replace('-', np.nan).str.replace('Th.', 'k'))
+    .assign(multiplier = lambda x: x.market_value.str[-1].replace('m', 1.).replace('k', .001))
     .assign(market_value = lambda x: x.market_value.str[1:-1].replace('', np.nan).astype(float) * x.multiplier)
-    .drop(columns=['empty', 'surname', 'multiplier'])
+    .drop(columns=['multiplier'])
 )
-
-# TODO: clean bad characters from "position" column, and solve Senegalese Centre-Back players named "Ba"
+df.info()
 
 # Total players, per month (unweighted by length of month)
 data = (df

@@ -12,6 +12,8 @@ from tqdm import tqdm
 
 from scrape.etiget import etiget
 
+cardmarket_url='https://www.cardmarket.com/en/'
+
 def parse_row(row):
     try:
         original_title = row.find('span', class_='expansionIcon')['data-original-title']
@@ -67,22 +69,14 @@ def parse_table(table):
         ]
     )
 
-def parse_page(page):
+def fetch_page(page: str) -> pd.DataFrame:
     response = etiget(page)
     assert response.status_code == 200
     soup = bs4.BeautifulSoup(response.content, 'lxml')
     table = soup.select('body > main > section > div.table.table-striped > div.table-body')[0]
     return parse_table(table)
 
-def product_query(cardmarket='https://www.cardmarket.com/en/', game='Magic',
-                idCategory='All', idExpansion='All', searchString=None, exactMatch=None, onlyAvailable=None, idRarity='All', onlyCardmarket=None):
-    input_searchString = f'&searchString={searchString}' if searchString else ''
-    check_exactMatch = f'&exactMatch={exactMatch}' if exactMatch else ''
-    check_onlyAvailable = f'&onlyAvailable={onlyAvailable}' if onlyAvailable else ''
-    check_onlyCardmarket = f'&onlyCardmarket={onlyCardmarket}' if onlyCardmarket else ''
-    return cardmarket + game + f'/Products/Search?idCategory={idCategory}&idExpansion={idExpansion}{input_searchString}{check_exactMatch}{check_onlyAvailable}&idRarity={idRarity}{check_onlyCardmarket}'
-
-def parse_query(query):
+def fetch_query(query: str) -> pd.DataFrame:
     response = etiget(query)
     assert response.status_code == 200
     soup = bs4.BeautifulSoup(response.content, 'lxml')
@@ -95,9 +89,18 @@ def parse_query(query):
         per_page = 30
         pages = (hits + per_page - 1) // per_page
         return pd.concat([
-            parse_page(query + f'&site={page + 1}')
+            fetch_page(query + f'&site={page + 1}')
             for page in tqdm(range(pages))
         ])
     except Exception as e:
         print(e)
         return pd.DataFrame()
+
+def search_products(game='Magic', idCategory='All', idExpansion='All', idRarity='All',
+                    searchString=None, exactMatch=None, onlyAvailable=None, onlyCardmarket=None) -> pd.DataFrame:
+    input_searchString   = '' if searchString   is None else f'&searchString={searchString}'
+    check_exactMatch     = '' if exactMatch     is None else f'&exactMatch={exactMatch}'
+    check_onlyAvailable  = '' if onlyAvailable  is None else f'&onlyAvailable={onlyAvailable}'
+    check_onlyCardmarket = '' if onlyCardmarket is None else f'&onlyCardmarket={onlyCardmarket}'
+    query = cardmarket_url + game + f'/Products/Search?idCategory={idCategory}&idExpansion={idExpansion}&idRarity={idRarity}{input_searchString}{check_exactMatch}{check_onlyAvailable}{check_onlyCardmarket}'
+    return fetch_query(query)

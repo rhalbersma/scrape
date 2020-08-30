@@ -45,7 +45,6 @@ def fetch_menus():
         eval_option(soup, 'URL', 'URL')
     )
 
-# The complete information per licensee that is provided.
 licensee_columns = [
     'CompanyName',
     'LicenceNumber',
@@ -90,8 +89,7 @@ def fetch_register(Licensee='', Class='', Status='', URL=''):
         )
         N = len(eval_column(script, 'CompanyName'))
         cs = eval_column(script, 'CompanySeal')
-        # Company seals are listed twice, but only the first half are used.
-        assert cs[:N] == cs[N:]
+        assert cs[:N] == cs[N:] # Company seals are listed twice, but only the first half are used.
         return (pd
             .DataFrame.from_dict({
                 column: eval_column(script, column)[:N]
@@ -144,35 +142,39 @@ def eval_game_type(company, row):
     """
     Extract all providers and their licence numbers for the game type table row.
     """
-    content = row.find_all('td')[:-1]
-    return pd.DataFrame(
-        data=[(
-                company.LinkedName,
-                company.LinkedSeal,
-                content[0].text,
-                content[1].text,
-                ' '.join(provider.split(' ')[:-1]),
-                provider.split(' ')[-1]
-            )
-            for provider in [
-                string.replace('\u2022 ', '')
-                for string in (content[2]
-                    .text
-                    .lstrip('\r\n')
-                    .rstrip(' \n')
-                    .split(' \r\n')
+    try:
+        content = row.find_all('td')[:-1]
+        return pd.DataFrame(
+            data=[(
+                    company.LinkedName,
+                    company.LinkedSeal,
+                    content[0].text,
+                    content[1].text,
+                    ' '.join(provider.split(' ')[:-1]),
+                    provider.split(' ')[-1]
                 )
+                for provider in [
+                    string.replace('\u2022 ', '')
+                    for string in (content[2]
+                        .text
+                        .lstrip('\r\n')
+                        .rstrip(' \n')
+                        .split(' \r\n')
+                    )
+                ]
+            ],
+            columns=[
+                'LinkedName',
+                'LinkedSeal',
+                'LicenceNumber',
+                'LicenceClass',
+                'ProviderName',
+                'ProviderLicence'
             ]
-        ],
-        columns=[
-            'LinkedName',
-            'LinkedSeal',
-            'LicenceNumber',
-            'LicenceClass',
-            'ProviderName',
-            'ProviderLicence'
-        ]
-    ) if content[2].text.count('\u2022') else pd.DataFrame()
+        )
+    except:
+        # We don't print the exception here as it is a very frequent occurrence
+        return pd.DataFrame()
 
 def fetch_providers_and_urls(company):
     response = etiget(verification_url + f'?company={company.LinkedSeal}&details=1')

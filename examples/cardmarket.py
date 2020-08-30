@@ -5,6 +5,5 @@
 
 import scrape.cardmarket as cm
 
-df = cm.parse_query(cm.product_query(searchString='Forest'))
-
-# df.to_cvs('magic_forest.csv')
+df = cm.search_products(searchString='Forest')
+df.info()

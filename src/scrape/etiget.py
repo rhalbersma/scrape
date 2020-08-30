@@ -9,7 +9,7 @@ import requests
 
 def etiget(url, crawl_delay=2, headers={'User-agent': 'Custom'}, **kwargs):
     """
-    Wrap requests.get to conform to webscraping etiquette.
+    Wrap requests.get() to conform to webscraping etiquette.
     """
     time.sleep(crawl_delay)
     return requests.get(url, headers=headers, **kwargs)

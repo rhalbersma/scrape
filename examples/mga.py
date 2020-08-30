@@ -73,7 +73,7 @@ register_urls = (pd
     .reset_index(drop=True)
 )
 
-# Combine all unique entries in the register versions found so far.
+print('Combine all unique entries in the register versions found so far:')
 register = (pd
     .concat([
         register_empty,
@@ -124,8 +124,10 @@ linked_companies = (pd
 )
 
 df = linked_companies.drop_duplicates(subset='LinkedSeal')
-linked_providers, linked_urls = tuple(
-    pd.concat(list(t), sort=False).drop_duplicates().reset_index(drop=True)
+linked_providers, linked_urls = tuple(pd
+    .concat(list(t), sort=False)
+    .drop_duplicates()
+    .reset_index(drop=True)
     # The loop over fetch_providers_and_urls returns a list of pairs of DataFrames.
     # The zip(*) operation transposes this into a pair of lists of DataFrames.
     for t in zip(*[
@@ -134,7 +136,7 @@ linked_providers, linked_urls = tuple(
     ])
 )
 
-# register.to_csv('register.csv', index=False, sep=';')
-# linked_companies.to_csv('linked_companies.csv', index=False, sep=';')
-# linked_providers.to_csv('linked_providers.csv', index=False, sep=';')
-# linked_urls.to_csv('linked_urls.csv', index=False, sep=';')
+register.info()
+linked_companies.info()
+linked_providers.info()
+linked_urls.info()

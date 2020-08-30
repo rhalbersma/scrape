@@ -14,11 +14,11 @@ import pandas as pd
 
 from scrape.etiget import etiget
 
-transfermarkt = 'https://www.transfermarkt.com'
+transfermarkt_url = 'https://www.transfermarkt.com'
 eu_leagues = '/wettbewerbe/europa'
 
 def fetch_eu_leagues(page):
-    response = etiget(transfermarkt + eu_leagues + f'?page={page}')
+    response = etiget(transfermarkt_url + eu_leagues + f'?page={page}')
     assert response.status_code == 200
     return (bs4
         .BeautifulSoup(response.content, 'lxml')
@@ -35,7 +35,7 @@ def extract_league_link(league):
     )
 
 def fetch_clubs(league):
-    response = etiget(transfermarkt + league)
+    response = etiget(transfermarkt_url + league)
     assert response.status_code == 200
     return (bs4
         .BeautifulSoup(response.content, 'lxml')
@@ -52,7 +52,7 @@ def extract_club_link(club):
     )
 
 def fetch_players(club):
-    response = etiget(transfermarkt + club)
+    response = etiget(transfermarkt_url + club)
     try:
         soup = bs4.BeautifulSoup(response.content, 'lxml')
         try:
@@ -69,7 +69,41 @@ def fetch_players(club):
         return []
 
 def extract_player_data(player):
-    return tuple(
-        cell.text
-        for cell in player.find_all('td', recursive=False)
-    )
+    try:
+        number = (player
+            .find('div', class_='rn_nummer')
+            .text
+        )
+    except:
+        number = None
+    try:
+        name = (player
+            .find('td', itemprop='athlete')
+            .text
+        )
+    except:
+        name = None
+    try:
+        position = (player
+            .find('td', class_='posrela')
+            .find_all('tr')[1]
+            .find('td')
+            .text
+        )
+    except:
+        position = None
+    try:
+        birth_date = (player
+            .find_all('td', recursive=False)[3]
+            .text
+        )
+    except:
+        birth_date = None
+    try:
+        market_value = (player
+            .find('td', class_='rechts hauptlink')
+            .text
+        )
+    except:
+        market_value = None
+    return number, name, position, birth_date, market_value

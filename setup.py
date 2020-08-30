@@ -18,13 +18,13 @@ setup(
     install_requires=[
         'bs4', 'lxml', 'numpy', 'pandas', 'plotnine', 'pylint', 'requests', 'tqdm'
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha'
         'Intended Audience :: Science/Research'
         'License :: OSI Approved :: Boost Software License 1.0 (BSL-1.0)'
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.8',
     ],
 )

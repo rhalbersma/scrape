@@ -20,7 +20,7 @@ setup(
     ],
     python_requires='>=3.8',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha'
+        'Development Status :: 7 - Inactive'
         'Intended Audience :: Science/Research'
         'License :: OSI Approved :: Boost Software License 1.0 (BSL-1.0)'
         'Programming Language :: Python',

@@ -3,7 +3,7 @@
 #    (See accompanying file LICENSE_1_0.txt or copy at
 #          http://www.boost.org/LICENSE_1_0.txt)
 
-# An independent re-implementation of Marcel Wieting's code review post
+# Re-implementing Marcel Wieting's code review post
 # https://codereview.stackexchange.com/questions/239521/performance-read-large-amount-of-xmls-and-load-into-single-csv
 
 import os

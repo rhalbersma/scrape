@@ -4,6 +4,7 @@
 # Python generated
 *.egg-info
 *__pycache__
+.ipynb_checkpoints
 
 # Visual Studio Code generated
 .vscode

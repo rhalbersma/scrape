@@ -1,4 +1,4 @@
-# Educational Exercises in Web Scraping
+# Educational exercises in web scraping
 
 [![Language](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org/)
 [![Standard](https://img.shields.io/badge/Python-3.8-blue.svg)](https://en.wikipedia.org/wiki/History_of_Python)

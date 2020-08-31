@@ -19,7 +19,7 @@ The `scrape` package consists of four modules of (hopefully!) educational progra
 ## Installation
 
 ```bash
-git clone https://github.com/rhalbersma/scrape.git
+git clone https://github.com/rhalbersma/scrape
 cd scrape
 python3 -m venv .env
 source .env/bin/activate

@@ -25,7 +25,7 @@ print('Fetching register information from all licensees:')
 register_licensees = (pd
     .concat([
         mga.fetch_register(Licensee=licensee.CompanyName)
-        for _, licensee in tqdm(licensees.iterrows(), total=licensees.shape[0])
+        for licensee in tqdm(licensees.itertuples(), total=licensees.shape[0])
     ])
     .drop_duplicates()
     .assign(CompanySeal = lambda x: x.CompanySeal.str.split('=').str[-1])
@@ -38,7 +38,7 @@ print('Fetching register information from all gaming service types:')
 register_services = (pd
     .concat([
         mga.fetch_register(Class=service.GamingService)
-        for _, service in tqdm(services.iterrows(), total=services.shape[0])
+        for service in tqdm(services.itertuples(), total=services.shape[0])
     ])
     .drop_duplicates()
     .assign(CompanySeal = lambda x: x.CompanySeal.str.split('=').str[-1])
@@ -51,7 +51,7 @@ print('Fetching register information from all status types:')
 register_statuses = (pd
     .concat([
         mga.fetch_register(Status=status.Status)
-        for _, status in tqdm(statuses.iterrows(), total=statuses.shape[0])
+        for status in tqdm(statuses.itertuples(), total=statuses.shape[0])
     ])
     .drop_duplicates()
     .assign(CompanySeal = lambda x: x.CompanySeal.str.split('=').str[-1])
@@ -64,7 +64,7 @@ print('Fetching register information from all URLs:')
 register_urls = (pd
     .concat([
         mga.fetch_register(URL=url.URL)
-        for _, url in tqdm(urls.iterrows(), total=urls.shape[0])
+        for url in tqdm(urls.itertuples(), total=urls.shape[0])
     ])
     .drop_duplicates()
     .assign(CompanySeal = lambda x: x.CompanySeal.str.split('=').str[-1])
@@ -92,7 +92,7 @@ print('Fetching linked companies from all companies:')
 linked_companies = (pd
     .concat([
         mga.fetch_linked_companies(company)
-        for _, company in tqdm(companies.iterrows(), total=companies.shape[0])
+        for company in tqdm(companies.itertuples(), total=companies.shape[0])
     ])
     .merge(
         companies,
@@ -132,7 +132,7 @@ linked_providers, linked_urls = tuple(pd
     # The zip(*) operation transposes this into a pair of lists of DataFrames.
     for t in zip(*[
         mga.fetch_providers_and_urls(company)
-        for _, company in tqdm(df.iterrows(), total=df.shape[0])
+        for company in tqdm(df.itertuples(), total=df.shape[0])
     ])
 )
 

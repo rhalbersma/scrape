@@ -39,7 +39,7 @@ Please note that the `scrape` package tries to be a good netizen by using a thin
 
 The `nct` module is the easiest way to get started. This code involves downloading a single `.zip` file, unpacking the contents on disk and parsing a large number of XML files and combining them into a `DataFrame`. The challenge here is to do so efficiently, since the downloaded content consumes several gigabytes of disk space. A suboptimal approach will quickly exhaust the memory of even a high end machine.
 
-The `cardmarket` module is a typical webscraping exercise where tabled data from several web pages are being downloaded and brought together into a single `DataFrame`. The tabled data is *just* not structured enough (is it ever?) to be consumed directly through `pandas.read_html()`, so each individual row has to be separately extracted.
+The `cardmarket` module is a typical webscraping exercise where tabled data from several web pages are being downloaded and brought together into a single `DataFrame`. The tabled data is *just* not structured enough (is it ever?) to be consumed directly by `pandas.read_html()`, so each individual row has to be separately extracted.
 
 The `transfermarkt` module goes a step beyond this by unraveling several levels of aggregation: from the continent, via the league, to finally the club level. This website also requires a handwritten parser for the tabled data. The resulting data is tidied up to be able make scatterplots (shown in a Jupyter notebook that is stored in the `examples` subdirectory).
 

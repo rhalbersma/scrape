@@ -1,7 +1,11 @@
-# Virtual environment
+# virtual environment
 .env/
 
-# Python generated
+# setuptools generated
 *.egg-info
-*__pycache__
+
+# Python generated
+__pycache__
+
+# Jupyter generated
 .ipynb_checkpoints

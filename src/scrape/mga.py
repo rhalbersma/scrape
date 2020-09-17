@@ -192,8 +192,8 @@ def fetch_providers_and_urls(company):
                 .find_all('tr')[1:]
             )
         ])
-    except Exception as e:
-        print(e)
+    except:
+        # We don't print the exception here as it is a very frequent occurrence
         providers = pd.DataFrame()
     try:
         links = (soup
@@ -202,8 +202,8 @@ def fetch_providers_and_urls(company):
             .find_next_sibling('td')
             .find_all('a')
         )
-    except Exception as e:
-        print(e)
+    except:
+        # We don't print the exception here as it is a very frequent occurrence
         links = []
     URLs = pd.DataFrame(
         data=[

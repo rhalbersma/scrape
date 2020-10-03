@@ -29,9 +29,9 @@ pip install -e .
 
 ## Notes
 
-For each module, the `examples` directory contains a script that can be run in order to download the relevant data and, in some cases, to do some exploratory data analysis. The 'weapons of choice' for the actual web scraping are the Python packages [requests](https://requests.readthedocs.io/en/master/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). The actual data is being handled through [Pandas](https://pandas.pydata.org/). For visualisation, we employ [plotnine](https://plotnine.readthedocs.io/en/stable/) (a Python implementation of the Grammar of Graphics), stored inside a [Jupyter](https://jupyter.org/) notebook.
+For each module, the `examples` directory contains a [Jupyter](https://jupyter.org/) notebook that can be run in order to download the relevant data and, in some cases, to do some exploratory data analysis. The 'weapons of choice' for the actual web scraping are the Python packages [requests](https://requests.readthedocs.io/en/master/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). The actual data is being handled through [Pandas](https://pandas.pydata.org/). For visualisation, we employ [plotnine](https://plotnine.readthedocs.io/en/stable/) (a Python implementation of the Grammar of Graphics).
 
-Please note that some scripts can take a long time (upwards of an hour) to run and store several gigabytes on disk. Such long-running computations are being monitored through a [tqdm](https://github.com/tqdm/tqdm) progress bar.
+Please note that some scripts can take a long time (around two hours) to run and store several gigabytes on disk. Such long-running computations are being monitored through a [tqdm](https://github.com/tqdm/tqdm) progress bar.
 
 Please note that the `scrape` package tries to be a good netizen by using a thin wrapper `etiget()` around `requests.get()` that by default uses a crawl delay of two seconds in between every request. Please don't override this without reading a corresponding website's `robots.txt`.
 

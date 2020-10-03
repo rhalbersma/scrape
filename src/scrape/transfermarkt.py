@@ -10,14 +10,14 @@ import re
 
 import bs4
 import lxml
-import pandas as pd
+from typing import Optional, Tuple
 
 from scrape.etiget import etiget
 
 transfermarkt_url = 'https://www.transfermarkt.com'
 eu_leagues = '/wettbewerbe/europa'
 
-def fetch_eu_leagues(page):
+def fetch_eu_leagues(page: str) -> bs4.element.ResultSet:
     response = etiget(transfermarkt_url + eu_leagues + f'?page={page}')
     assert response.status_code == 200
     return (bs4
@@ -27,14 +27,14 @@ def fetch_eu_leagues(page):
         .find_all('tr', class_=re.compile('odd|even'))
     )
 
-def extract_league_link(league):
+def extract_league_link(league: bs4.element.Tag) -> str:
     return (league
         .find_all('td')[2]
         .find('a')
         .get('href')
     )
 
-def fetch_clubs(league):
+def fetch_clubs(league: str) -> bs4.element.ResultSet:
     response = etiget(transfermarkt_url + league)
     assert response.status_code == 200
     return (bs4
@@ -44,14 +44,14 @@ def fetch_clubs(league):
         .find_all('tr', class_=re.compile('odd|even'))
     )
 
-def extract_club_link(club):
+def extract_club_link(club: bs4.element.Tag) -> str:
     return (club
         .find('td')
         .find('a')
         .get('href')
     )
 
-def fetch_players(club):
+def fetch_players(club: str) -> bs4.element.ResultSet:
     response = etiget(transfermarkt_url + club)
     try:
         soup = bs4.BeautifulSoup(response.content, 'lxml')
@@ -68,7 +68,7 @@ def fetch_players(club):
         print(f'Error {response.status_code}: not finding club == {club}')
         return []
 
-def extract_player_data(player):
+def extract_player_data(player: bs4.element.Tag) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
     try:
         number = (player
             .find('div', class_='rn_nummer')

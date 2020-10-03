@@ -9,16 +9,17 @@ import bs4
 import lxml
 import pandas as pd
 from tqdm import tqdm
+from typing import Optional, Tuple
 
 from scrape.etiget import etiget
 
 cardmarket_url='https://www.cardmarket.com/en/'
 
-def parse_row(row):
+def parse_row(row: bs4.element.Tag) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[int], Optional[str]]:
     try:
-        original_title = row.find('span', class_='expansionIcon')['data-original-title']
+        Title = row.find('span', class_='expansionIcon')['data-original-title']
     except:
-        original_title = None
+        Title = None
     try:
         Name = (row
             .find('div', class_='row no-gutters')
@@ -35,17 +36,18 @@ def parse_row(row):
     except:
         Rarity = None
     try:
-        number = (row
+        Number = (row
             .find('div', class_='col-number d-none d-md-flex text-nowrap')
             .find_all('span')[-1]
             .text
         )
     except:
-        number = None
+        Number = None
     try:
         Available = int(row
             .find('div', class_='col-availability px-2')
-            .find('span').text
+            .find('span')
+            .text
         )
     except:
         Available = None
@@ -56,16 +58,16 @@ def parse_row(row):
         )
     except:
         From = None
-    return original_title, Name, Rarity, number, Available, From
+    return Title, Name, Rarity, Number, Available, From
 
-def parse_table(table):
+def parse_table(table: bs4.element.ResultSet) -> pd.DataFrame:
     return pd.DataFrame(
         data = [
             parse_row(row)
             for row in table.find_all('div', id=re.compile(r'^productRow\d+'))
         ],
         columns = [
-            'orginal_title', 'Name', 'Rarity', 'number', 'Available', 'From'
+            'Title', 'Name', 'Rarity', 'Number', 'Available', 'From'
         ]
     )
 
@@ -91,7 +93,7 @@ def fetch_query(query: str) -> pd.DataFrame:
         return pd.concat([
             fetch_page(query + f'&site={page + 1}')
             for page in tqdm(range(pages))
-        ])
+        ]).reset_index(drop=True)
     except Exception as e:
         print(e)
         return pd.DataFrame()

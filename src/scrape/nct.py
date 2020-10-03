@@ -11,22 +11,25 @@ import zipfile
 
 from lxml import etree
 import pandas as pd
+from tqdm import tqdm
 
 from scrape.etiget import etiget
 
-def download_data(url, file):
+def download_data(url: str, file: str, chunk_size=1024*1024) -> None:
     response = etiget(url, stream=True)
     assert response.status_code == 200
+    content_length = int(response.headers['Content-Length'])
+    num_chunks = (content_length + chunk_size - 1) // chunk_size
     with open(file, 'wb') as dst:
-        for chunk in response.iter_content(chunk_size=4096):
+        for chunk in tqdm(response.iter_content(chunk_size=chunk_size), total=num_chunks):
             dst.write(chunk)
 
-def unzip_data(file, path):
+def unzip_data(file: str, path: str) -> None:
     with zipfile.ZipFile(file) as src:
         src.extractall(path)
 
-def parse_xml(file):
-    # The XML files are named NCTyyyyxxxx, this extracts the 8 yyyyxxxx digits
+def parse_xml(file: str) -> pd.DataFrame:
+    # The XML files are named NCTyyyyxxxx, this extracts the last 8 yyyyxxxx digits
     id = int(os.path.splitext(os.path.basename(file))[0][-8:])
     tree = etree.parse(file)
     return pd.DataFrame(

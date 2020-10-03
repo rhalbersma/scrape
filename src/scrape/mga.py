@@ -8,15 +8,15 @@ import re
 
 import bs4
 import lxml
-import numpy as np
 import pandas as pd
+from typing import List, NamedTuple, Tuple
 
 from scrape.etiget import etiget
 
 register_url = 'https://mgalicenseeregister.mga.org.mt/'
 verification_url = 'https://www.authorisation.mga.org.mt/verification.aspx'
 
-def eval_option(soup, data_placeholder, colname):
+def eval_option(soup: bs4.BeautifulSoup, data_placeholder: str, colname: str) -> pd.DataFrame:
     """
     Extract the option values for a menu into a Pandas DataFrame.
     """
@@ -31,7 +31,7 @@ def eval_option(soup, data_placeholder, colname):
         columns=[colname]
     )
 
-def fetch_menus():
+def fetch_menus() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Get the menus from the MGA Licensee Register.
     """
@@ -59,7 +59,7 @@ licensee_columns = [
     'Email'
 ]
 
-def eval_column(script, column):
+def eval_column(script: str, column: str) -> List:
     """
     Evaluate the JavaScript array for a column as a Python list.
     """
@@ -71,7 +71,7 @@ def eval_column(script, column):
         ))
     )
 
-def fetch_register(Licensee='', Class='', Status='', URL=''):
+def fetch_register(Licensee='', Class='', Status='', URL='') -> pd.DataFrame:
     """
     The search form of the MGA Licensee Register.
     """
@@ -100,7 +100,7 @@ def fetch_register(Licensee='', Class='', Status='', URL=''):
         print(f'{e}: {Licensee} - {Class} - {Status} - {URL}')
         return pd.DataFrame()
 
-def eval_companies(register):
+def eval_companies(register: pd.DataFrame) -> pd.DataFrame:
     """
     Extract the unique company names and seals from the MGA Licensee Register.
     """
@@ -111,7 +111,13 @@ def eval_companies(register):
         .reset_index(drop=True)
     )
 
-def fetch_linked_companies(company):
+class Company(NamedTuple):
+    CompanySeal: str
+    CompanyName: str
+    LinkedName: str
+    LinkedSeal: str
+
+def fetch_linked_companies(company: Company) -> pd.DataFrame:
     """
     Get all indirectly linked companies.
     These are sometimes not directly returned from the menu options of the MGA Licensee Register.
@@ -138,7 +144,7 @@ def fetch_linked_companies(company):
         ]
     ))
 
-def eval_game_type(company, row):
+def eval_game_type(company: Company, row: bs4.element.Tag) -> pd.DataFrame:
     """
     Extract all providers and their licence numbers for the game type table row.
     """
@@ -176,7 +182,7 @@ def eval_game_type(company, row):
         # We don't print the exception here as it is a very frequent occurrence
         return pd.DataFrame()
 
-def fetch_providers_and_urls(company):
+def fetch_providers_and_urls(company: Company) -> Tuple[pd.DataFrame, pd.DataFrame]:
     response = etiget(verification_url + f'?company={company.LinkedSeal}&details=1')
     try:
         soup = bs4.BeautifulSoup(response.content, 'lxml')

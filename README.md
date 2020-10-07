@@ -41,13 +41,13 @@ The `nct` module is the easiest way to get started. This code involves downloadi
 
 The `cardmarket` module is a typical webscraping exercise where tabled data from several web pages are being downloaded and brought together into a single `DataFrame`. The tabled data is *just* not structured enough (is it ever?) to be consumed directly by `pandas.read_html()`, so each individual row has to be separately extracted.
 
-The `transfermarkt` module goes a step beyond this by unraveling several levels of aggregation: from the continent, via the league, to finally the club level. This website also requires a handwritten parser for the tabled data. The resulting data is tidied up to be able make scatterplots (shown in a Jupyter notebook that is stored in the `examples` subdirectory).
+The `transfermarkt` module goes a step beyond this by unraveling several levels of aggregation: from the continent, via the league, to finally the club level. This website also requires a handwritten parser for the tabled data. The resulting data is tidied up to be able to make scatterplots.
 
-The `mga` module contains the most complicated code. We use the `ast` Python module to parse a JavaScript array of web menu options directly into a Python list for further processing. This website has multiple levels of indirection that cross-link each other. Downloading the data is straightforward, but substantial domain knowledge is required to combine the downloaded data into a meaningful set of tidied `DataFrame`s.
+The `mga` module is the most advanced case. We use the `ast` Python module to parse a JavaScript array of web menu options directly into a Python list for further processing. This website has multiple levels of indirection that cross-link each other. Downloading the data is straightforward, but substantial domain knowledge is required to combine the downloaded data into a meaningful set of tidied `DataFrame`s.
 
 ## Status
 
-This repository is **inactive**. There are currently no plans to resume activity. Nevertheless, bug reports (websites change over time!) are welcome.
+This repository is **inactive**. There are currently no plans to resume activity or add new examples. Nevertheless, bug reports (websites change over time!) are welcome, and there might be occasional updates as I learn new best practices.
 
 ## Acknowledgements
 

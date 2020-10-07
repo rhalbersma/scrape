@@ -16,7 +16,7 @@ setup(
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     install_requires=[
-        'bs4', 'lxml', 'notebook', 'numpy', 'pandas', 'plotnine', 'pylint', 'requests', 'tqdm'
+        'bs4', 'lxml', 'notebook', 'numpy', 'pandas', 'plotnine', 'pylint', 'requests', 'tqdm', 'xlrd'
     ],
     python_requires='>=3.8',
     classifiers=[

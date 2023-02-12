@@ -11,10 +11,10 @@ The `scrape` package consists of four modules of (hopefully!) educational progra
 
 | Module          | Topic | References |
 | :-------------- | :---- | :--------- |
-| `cardmarket`    | the [cardmarket.com](https://www.cardmarket.com/en/Magic/Products/Search) market place for Magic: The Gathering | |
-| `mga`           | the [Malta Gaming Authority](https://www.mga.org.mt/mgalicenseeregister/) licensee register | |
 | `nct`           | the [National Clinical Trials](https://clinicaltrials.gov/ct2/resources/download#DownloadAllData) database | Marcel Wieting's [Code Review post](https://codereview.stackexchange.com/questions/239521/performance-read-large-amount-of-xmls-and-load-into-single-csv) |
+| `cardmarket`    | the [cardmarket.com](https://www.cardmarket.com/en/Magic/Products/Search) market place for Magic: The Gathering | |
 | `transfermarkt` | the [transfermarkt.com](https://www.transfermarkt.com/wettbewerbe/europa) football database | Marcel Wieting's [LinkedIn post](https://www.linkedin.com/pulse/web-scraping-relative-age-effect-professional-football-marcel-wieting/?trackingId=d8UqaacWy%2FaNdTYFhh4MsQ%3D%3D) |
+| `mga`           | the [Malta Gaming Authority](https://www.mga.org.mt/mgalicenseeregister/) licensee register | |
 
 ## Installation
 
@@ -48,6 +48,8 @@ The `mga` module is the most advanced case. We use the `ast` Python module to pa
 ## Status
 
 This repository is **inactive**. There are currently no plans to resume activity or add new examples. Nevertheless, bug reports (websites change over time!) are welcome, and there might be occasional updates as I learn new best practices.
+
+A nice challenge would be to port the example Jupyter notebooks to R Markdown documents, and the underlying Python modules to R scripts using tidyverse pacakges such as `{rvest}`. AFAICS, this should be relatively straightforward, except for the `mga` module that uses advanced parsing techniques. 
 
 ## Acknowledgements
 

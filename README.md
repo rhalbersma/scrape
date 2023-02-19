@@ -29,9 +29,7 @@ pip install -e .
 
 ## Notes
 
-For each module, the `examples` directory contains a [Jupyter](https://jupyter.org/) notebook that can be run in order to download the relevant data and, in some cases, to do some exploratory data analysis. 
-
-The 'weapons of choice' for the actual web scraping are the Python packages [requests](https://requests.readthedocs.io/en/master/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). The actual data is being handled through [Pandas](https://pandas.pydata.org/). For visualisation, we employ [plotnine](https://plotnine.readthedocs.io/en/stable/) (a Python implementation of the Grammar of Graphics).
+For each module, the `examples` directory contains a [Jupyter](https://jupyter.org/) notebook that can be run in order to download the relevant data and, in some cases, to do some exploratory data analysis. The 'weapons of choice' for the actual web scraping are the Python packages [requests](https://requests.readthedocs.io/en/master/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/). The actual data is being handled through [Pandas](https://pandas.pydata.org/). For visualisation, we employ [plotnine](https://plotnine.readthedocs.io/en/stable/) (a Python implementation of the Grammar of Graphics).
 
 A nice challenge would be to port the example Jupyter notebooks to R Markdown documents, and the underlying Python modules to R scripts using tidyverse pacakges such as [`{rvest}`](https://rvest.tidyverse.org/), [`{dplyr}`](https://dplyr.tidyverse.org/), and [`{ggplot2}`](https://ggplot2.tidyverse.org/). AFAICS, this should be relatively straightforward, except for the `mga` module that uses advanced parsing techniques. 
 
